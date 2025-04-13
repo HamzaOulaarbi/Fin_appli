@@ -3,4 +3,3 @@ yfinance
 streamlit
 plotly
 openpyxl
-forex_python
