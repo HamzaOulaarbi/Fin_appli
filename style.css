@@ -1,0 +1,33 @@
+/* === Style général === */
+body {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+h1, h2, h3, h4 {
+    color: #003366;
+}
+
+.stTabs [data-baseweb="tab"] {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0e1117;
+    border-bottom: 3px solid transparent;
+}
+
+.stTabs [aria-selected="true"] {
+    border-color: #3399ff;
+    color: #0055aa;
+}
+
+.stMetric {
+    background-color: #f0f6ff;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stButton>button {
+    background-color: #0055aa;
+    color: white;
+    border-radius: 8px;
+}
