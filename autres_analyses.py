@@ -122,7 +122,7 @@ def afficher_analyse():
                 metric_with_note("📊 Volume moyen", f"{info.get('averageVolume', 'N/A'):,}", "Titres échangés par jour.")
                 metric_with_note("📉 Beta", round(info.get("beta", 0), 2), "Volatilité par rapport au marché.")
                 metric_with_note("💰 Capitalisation", f"{info.get('marketCap', 'N/A'):,}", "Valeur totale de l'entreprise.")
-                
+
             with col2:
                 metric_with_note("📊 P/E (ttm)", round(info.get("trailingPE", 0), 2), "Ratio cours/bénéfice passé.")
                 metric_with_note("📊 P/E (prévision)", round(info.get("forwardPE", 0), 2), "Ratio basé sur bénéfices futurs.")
@@ -170,3 +170,107 @@ def afficher_analyse():
                 st.write("Erreur lors du chargement des dividendes.")
     else:
         st.info("Sélectionnez au moins une entreprise pour commencer.")
+
+
+    def generate_prompt_from_metrics(info):
+        return f"""
+    Voici les données financières de {info.get('shortName', 'cette entreprise')} :
+
+    - Prix actuel : {info.get('currentPrice', 'N/A')}
+    - Dernière clôture : {info.get('previousClose', 'N/A')}
+    - Objectif 1 an : {info.get('targetMeanPrice', 'N/A')}
+    - Variation 52 semaines : {info.get('fiftyTwoWeekLow', 'N/A')} - {info.get('fiftyTwoWeekHigh', 'N/A')}
+    - P/E : {info.get('trailingPE', 'N/A')}
+    - EPS : {info.get('trailingEps', 'N/A')}
+    - ROE : {info.get('returnOnEquity', 'N/A')}
+    - Dette/Equity : {info.get('debtToEquity', 'N/A')}
+    - Free Cashflow : {info.get('freeCashflow', 'N/A')}
+    - Dividende : {info.get('dividendYield', 'N/A')}
+
+    Peux-tu fournir une synthèse financière concise et professionnelle de ces données ?
+    """
+
+
+    import requests
+
+    def call_llm_synthesis(prompt):
+        HF_API_URL = "https://router.huggingface.co/hf-inference/models/ProsusAI/finbert"
+        headers = {"Authorization": f"Bearer {st.secrets['HF_TOKEN']}"}
+
+        response = requests.post(HF_API_URL, headers=headers, json={"inputs": prompt})
+        # return response.json()[0]['generated_text']
+        return response.json()
+
+        # if response.status_code == 200:
+        #     return response.json()[0]['generated_text']
+        # else:
+        #     return "❌ Erreur dans la génération de la synthèse."
+
+    if st.button("🧠 Générer une prediction automatique"):
+        # selected_names = st.multiselect("Entreprises :", list(company_dict.keys()), default=["Apple (AAPL)"])
+        symbol = company_dict[selected_names[0]]
+        ticker = yf.Ticker(symbol)
+        infog = ticker.info
+
+        with st.spinner(f"Génération en cours pour {selected_names}..."):
+            prompt = generate_prompt_from_metrics(infog)
+            st.write(prompt)
+            synthese = call_llm_synthesis(prompt)
+            st.markdown("### 📋 Synthèse Automatisée")
+            st.markdown(synthese)
+
+
+    # from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+    # import os
+    # os.environ["STREAMLIT_WATCH_USE_POLLING"] = "true"
+    # # ⚙️ Cache pour éviter de recharger à chaque fois
+    # @st.cache_resource
+    # def load_finance_llm():
+    #     tokenizer = AutoTokenizer.from_pretrained("AdaptLLM/finance-LLM")
+    #     model = AutoModelForCausalLM.from_pretrained("AdaptLLM/finance-LLM")
+    #     return pipeline("text-generation", model=model, tokenizer=tokenizer)
+
+
+
+    # # 🧠 Prompt dynamique
+    # def generate_prompt_from_metrics(info):
+    #     return f"""
+    # Voici les données financières de {info.get('shortName', 'cette entreprise')} :
+
+    # - Prix actuel : {info.get('currentPrice', 'N/A')}
+    # - Dernière clôture : {info.get('previousClose', 'N/A')}
+    # - Objectif 1 an : {info.get('targetMeanPrice', 'N/A')}
+    # - Variation 52 semaines : {info.get('fiftyTwoWeekLow', 'N/A')} - {info.get('fiftyTwoWeekHigh', 'N/A')}
+    # - P/E : {info.get('trailingPE', 'N/A')}
+    # - EPS : {info.get('trailingEps', 'N/A')}
+    # - ROE : {info.get('returnOnEquity', 'N/A')}
+    # - Dette/Equity : {info.get('debtToEquity', 'N/A')}
+    # - Free Cashflow : {info.get('freeCashflow', 'N/A')}
+    # - Dividende : {info.get('dividendYield', 'N/A')}
+
+    # Peux-tu fournir une synthèse financière concise et professionnelle de ces données ?
+    # """
+
+    # # 🎯 Génération locale avec le modèle
+    # def call_llm_synthesis_local(prompt):
+    #     output = pipe(prompt, max_new_tokens=300, do_sample=True, temperature=0.7)[0]["generated_text"]
+    #     return output
+
+    # # 🎬 Bouton dans Streamlit
+    # if st.button("🧠 Générer une synthèse automatique"):
+    #     symbol = company_dict[selected_names[0]]
+    #     ticker = yf.Ticker(symbol)
+    #     infog = ticker.info
+        
+    #     pipe = load_finance_llm()
+
+
+    #     with st.spinner(f"Génération en cours pour {selected_names[0]}..."):
+    #         prompt = generate_prompt_from_metrics(infog)
+    #         st.markdown("##### 📝 Prompt envoyé au modèle")
+    #         st.code(prompt, language="markdown")
+            
+    #         synthese = call_llm_synthesis_local(prompt)
+            
+    #         st.markdown("### 📋 Synthèse Automatisée")
+    #         st.write(synthese)
