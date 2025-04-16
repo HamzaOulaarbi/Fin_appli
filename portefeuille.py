@@ -15,8 +15,11 @@ def charger_portefeuille(fichier):
         "AMS:ASML": "ASML.AS", "EPA:TTE": "TTE.PA", "EPA:FR": "FR.PA", "EPA:AF": "AF.PA", 
         "ETR:VBK": "VBK.DE", "NASDAQ:NVDA": "NVDA", "AMS:SHELL": "SHELL.AS", "TYO:7011": "7011.T", 
         "NASDAQ:GOOGL": "GOOGL", "NYSE:NKE": "NKE", "NASDAQ:PYPL": "PYPL", 
-        "NYSE:GES": "GES", "NASDAQ:UAL": "UAL"
-    }
+        "NYSE:GES": "GES", "NASDAQ:UAL": "UAL",
+        "IWLE.DE": "IWLE.DE",        # iShares MSCI World
+        "PSP5.PA": "PSP5.PA",       # AMUNDI S&P500
+        "PUST.PA": "PUST.PA",       # AMUNDI NASDAQ-100
+        }
     df["Symbole_Yahoo"] = df["Symbole (GOOGLEFINANCE)"].map(symboles_yahoo)
     return df
 

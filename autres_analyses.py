@@ -55,7 +55,7 @@ def afficher_analyse():
     # --- Liste d'entreprises ---
     company_dict = {
         "Apple (AAPL)": "AAPL", "Microsoft (MSFT)": "MSFT", "Amazon (AMZN)": "AMZN",
-        "Forvia SE":"0MGR.IL", "NIKE, Inc.":"NKE",
+        "Forvia SE": "0MGR.IL", "NIKE, Inc.": "NKE",
         "Tesla (TSLA)": "TSLA", "Google (GOOGL)": "GOOGL", "Nvidia (NVDA)": "NVDA",
         "Meta (META)": "META", "Netflix (NFLX)": "NFLX", "Adobe (ADBE)": "ADBE",
         "JPMorgan (JPM)": "JPM", "Goldman Sachs (GS)": "GS", "Bank of America (BAC)": "BAC",
@@ -64,7 +64,12 @@ def afficher_analyse():
         "Coca-Cola (KO)": "KO", "PepsiCo (PEP)": "PEP",
         "Pfizer (PFE)": "PFE", "Johnson & Johnson (JNJ)": "JNJ", "Moderna (MRNA)": "MRNA",
         "Renault (RNO)": "RNO.PA", "Stellantis (STLA)": "STLAP.PA", "Valeo": "FR.PA",
-        "Faurecia": "EO.PA", "Plastic Omnium": "POM.PA"
+        "Faurecia": "EO.PA", "Plastic Omnium": "POM.PA",
+
+        # Nouveaux ETF (tickers confirmés)
+        "iShares World (IWLE.DE)": "IWLE.DE",
+        "Amundi S&P500 (PSP5.PA)": "PSP5.PA",
+        "Amundi Nasdaq (PUST.PA)": "PUST.PA"
     }
 
     period_options = {
@@ -191,33 +196,33 @@ def afficher_analyse():
     """
 
 
-    import requests
+    # import requests
 
-    def call_llm_synthesis(prompt):
-        HF_API_URL = "https://router.huggingface.co/hf-inference/models/ProsusAI/finbert"
-        headers = {"Authorization": f"Bearer {st.secrets['HF_TOKEN']}"}
+    # def call_llm_synthesis(prompt):
+    #     HF_API_URL = "https://router.huggingface.co/hf-inference/models/ProsusAI/finbert"
+    #     headers = {"Authorization": f"Bearer {st.secrets['HF_TOKEN']}"}
 
-        response = requests.post(HF_API_URL, headers=headers, json={"inputs": prompt})
-        # return response.json()[0]['generated_text']
-        return response.json()
+    #     response = requests.post(HF_API_URL, headers=headers, json={"inputs": prompt})
+    #     # return response.json()[0]['generated_text']
+    #     return response.json()
 
-        # if response.status_code == 200:
-        #     return response.json()[0]['generated_text']
-        # else:
-        #     return "❌ Erreur dans la génération de la synthèse."
+    #     # if response.status_code == 200:
+    #     #     return response.json()[0]['generated_text']
+    #     # else:
+    #     #     return "❌ Erreur dans la génération de la synthèse."
 
-    if st.button("🧠 Générer une prediction automatique"):
-        # selected_names = st.multiselect("Entreprises :", list(company_dict.keys()), default=["Apple (AAPL)"])
-        symbol = company_dict[selected_names[0]]
-        ticker = yf.Ticker(symbol)
-        infog = ticker.info
+    # if st.button("🧠 Générer une prediction automatique"):
+    #     # selected_names = st.multiselect("Entreprises :", list(company_dict.keys()), default=["Apple (AAPL)"])
+    #     symbol = company_dict[selected_names[0]]
+    #     ticker = yf.Ticker(symbol)
+    #     infog = ticker.info
 
-        with st.spinner(f"Génération en cours pour {selected_names}..."):
-            prompt = generate_prompt_from_metrics(infog)
-            st.write(prompt)
-            synthese = call_llm_synthesis(prompt)
-            st.markdown("### 📋 Synthèse Automatisée")
-            st.markdown(synthese)
+    #     with st.spinner(f"Génération en cours pour {selected_names}..."):
+    #         prompt = generate_prompt_from_metrics(infog)
+    #         st.write(prompt)
+    #         synthese = call_llm_synthesis(prompt)
+    #         st.markdown("### 📋 Synthèse Automatisée")
+    #         st.markdown(synthese)
 
 
     # from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
