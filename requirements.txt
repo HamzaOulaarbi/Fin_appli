@@ -3,3 +3,8 @@ yfinance
 streamlit
 plotly
 openpyxl
+transformers
+bs4
+requests
+sentencepiece
+sacremoses
